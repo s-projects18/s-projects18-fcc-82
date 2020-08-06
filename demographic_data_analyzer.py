@@ -1,13 +1,35 @@
 import pandas as pd
-
+import numpy as np
 
 def calculate_demographic_data(print_data=True):
     # Read data from file
-    df = None
+    df = pd.read_csv("adult.data.csv", header=0)
+    
+    # 32561 entries, no NaN, 15 columns, no dates
+    # fnlwgt: final weight; People with similar demographic characteristics should have similar weights
+    #print(df.info())
+
+    # NaN-check/-correction
+    # age:ok, workclass:?, fnlwgt:ok, education:ok, education-num:ok
+    # marital-status:ok, occupation:?,relationship:ok, race:ok,sex:ok
+    # capital-gain:ok, capital-loss:ok, hours-per-week:ok
+    # native-country:?, salary:ok
+    #print(df['salary'].unique())
+    df['workclass'] = df['workclass'].replace('?', np.NaN)
+    df['occupation'] = df['occupation'].replace('?', np.NaN)
+    df['native-country'] = df['native-country'].replace('?', np.NaN)
+
 
     # How many of each race are represented in this dataset? This should be a Pandas series with race names as the index labels.
-    race_count = None
-
+    # TODO: more directly
+    all_races = df['race'].unique()
+    l=[]
+    i=[]
+    for race in all_races:
+      l.append( df['race'][df['race']==race].count() )
+      i.append(race)
+    race_count = pd.Series(l, index=i)
+ 
     # What is the average age of men?
     average_age_men = None
 
