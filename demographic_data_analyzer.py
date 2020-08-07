@@ -21,15 +21,21 @@ def calculate_demographic_data(print_data=True):
 
 
     # How many of each race are represented in this dataset? This should be a Pandas series with race names as the index labels.
-    # TODO: more directly
-    all_races = df['race'].unique()
-    l=[]
-    i=[]
-    for race in all_races:
-      l.append( df['race'][df['race']==race].count() )
-      i.append(race)
-    race_count = pd.Series(l, index=i)
- 
+    # (1) long-way:
+    #all_races = df['race'].unique()
+    #l=i=[]
+    #for race in all_races:
+    #  l.append( df['race'][df['race']==race].count() )
+    #  i.append(race)
+    #race_count = pd.Series(l, index=i)
+
+    # (2) aggregate way
+    #race_count = df.groupby('race').agg({'race':'count'})['race']
+
+    # (3) simplest way
+    race_count = df['race'].value_counts() # Input = Output = Series-Object
+
+
     # What is the average age of men?
     average_age_men = None
 
