@@ -32,31 +32,49 @@ def calculate_demographic_data(print_data=True):
     # (2) aggregate way
     #race_count = df.groupby('race').agg({'race':'count'})['race']
 
-    # (3) simplest way
-    race_count = df['race'].value_counts() # Input = Output = Series-Object
+    # (3) simplest way. (Input = Output = Series-Object)
+    race_count = df['race'].value_counts()
 
 
     # What is the average age of men?
-    average_age_men = None
+    #average_age_men = df['age'][df['sex']=='Male'].mean()
+    # why does this work???
+    #average_age_men = df.groupby(['sex'])['age'].mean()['Male']
+    average_age_men = df.groupby(['sex']).get_group('Male').mean()['age'] # Series
+    average_age_men = round(average_age_men, 1)
 
     # What is the percentage of people who have a Bachelor's degree?
-    percentage_bachelors = None
+    percentage_bachelors = round(df['education'].value_counts(normalize=True)["Bachelors"]*100, 1)
 
     # What percentage of people with advanced education (`Bachelors`, `Masters`, or `Doctorate`) make more than 50K?
+    adv_edu = ['Bachelors', 'Masters', 'Doctorate']
+    f1 = df['education'].isin(adv_edu)
+    f2 = (df['salary']=='>50K')
+    total = df['education'].count()
+    high = df[f1]['education'].count()
+    low  = df[~f1]['education'].count()
+
     # What percentage of people without advanced education make more than 50K?
 
-    # with and without `Bachelors`, `Masters`, or `Doctorate`
-    higher_education = None
-    lower_education = None
+    # with and without `Bachelors`, `Masters`, or `Doctorate` 
+    # ???
+    higher_education = round(high/total*100,1) # 23
+    lower_education = round(low/total*100,1)   # 77
+    #print(total, high, low, higher_education, lower_education)
 
     # percentage with salary >50K
-    higher_education_rich = None
-    lower_education_rich = None
+    total_high = df[f1]['education'].count()
+    total_low = df[~f1]['education'].count()
+    high = df[f1 & f2]['education'].count()
+    low  = df[~f1 & f2]['education'].count()
+    higher_education_rich = round(high/total_high*100,1)
+    lower_education_rich = round(low/total_low*100,1)
 
     # What is the minimum number of hours a person works per week (hours-per-week feature)?
-    min_work_hours = None
+    min_work_hours = df['hours-per-week'].min()
 
     # What percentage of the people who work the minimum number of hours per week have a salary of >50K?
+    # ???
     num_min_workers = None
 
     rich_percentage = None
